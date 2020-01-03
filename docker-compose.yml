@@ -1,0 +1,39 @@
+version: '3'
+services:
+
+  # The Application
+  app:
+    build:
+      context: ./app/
+      dockerfile: app.dockerfile
+    working_dir: /var/www
+    volumes:
+      - ./app/:/var/www/
+
+  # The Web Server
+  web:
+    build:
+      context: ./web/
+      dockerfile: web.dockerfile
+    working_dir: /var/www
+    volumes:
+      - ./web/:/var/www/
+    ports:
+      - 8080:80
+
+  # The Database
+  database:
+    image: mysql:8.0
+    volumes:
+      - ./db/dbdata:/var/lib/mysql
+      - ./db//my.cnf:/etc/mysql/conf.d/my.cnf
+    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci','--default-authentication-plugin=mysql_native_password']
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: secret
+    ports:
+        - "33061:3306"
+
+volumes:
+  dbdata:
+  my.cnf:
